@@ -8,6 +8,7 @@ on:
 jobs:
   monitor:
     runs-on: ubuntu-latest
+    environment: ${{ github.ref_name != 'main' && github.ref_name || null }}
 
     steps:
       - name: Checkout code
@@ -47,7 +48,7 @@ jobs:
             else
               git commit -m "chore: update artifacts"
             fi
-            git push origin main --force-with-lease
+            git push origin HEAD --force-with-lease
           else
             echo "No changes to commit"
           fi

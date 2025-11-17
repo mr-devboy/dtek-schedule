@@ -1,6 +1,6 @@
 {
   "name": "dtek-schedule",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "DTEK power outages schedule generator",
   "type": "module",
   "main": "./src/schedule.js",
