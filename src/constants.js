@@ -1,6 +1,15 @@
 import path from "node:path"
 
-export const SHUTDOWNS_PAGE = "https://www.dtek-krem.com.ua/ua/shutdowns"
+export const shutdownsPages = {
+  k: "https://www.dtek-kem.com.ua/ua/shutdowns",
+  kr: "https://www.dtek-krem.com.ua/ua/shutdowns",
+  dn: "https://www.dtek-dnem.com.ua/ua/shutdowns",
+  o: "https://www.dtek-oem.com.ua/ua/shutdowns",
+  d: "https://www.dtek-dem.com.ua/ua/shutdowns",
+}
+export const SHUTDOWNS_PAGE =
+  shutdownsPages[String(process.env.REGION).toLocaleLowerCase()] ??
+  shutdownsPages["kr"]
 export const SHUTDOWNS_DATA_MATCHER = /fact\s*=\s*(\{.*\})/s
 
 const GROUP_PREFIX = "GPV"
