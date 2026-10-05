@@ -28,9 +28,9 @@ const getShutdownsData = async () => {
   console.log("🌀 Getting shutdowns data...")
 
   const browser = await chromium.launch({ headless: true })
-  const browserPage = await browser.newPage()
 
   try {
+    const browserPage = await browser.newPage()
     await browserPage.goto(SHUTDOWNS_PAGE, {
       waitUntil: "load",
     })
@@ -47,20 +47,20 @@ const getShutdownsData = async () => {
     return data
   } catch (error) {
     console.error(`❌ Getting shutdowns data failed: ${error.message}.`)
-
-    if (getShutdownsDataRetries < RETRIES_MAX_COUNT) {
-      console.log("🌀 Try getting shutdowns data again...")
-      await new Promise((resolve) => setTimeout(resolve, RETRIES_TIMEOUT))
-      getShutdownsDataRetries++
-      return await getShutdownsData()
-    }
-
-    throw Error(
-      `❌ Getting shutdowns data failed after ${RETRIES_MAX_COUNT} retries.`
-    )
   } finally {
     await browser.close()
   }
+
+  if (getShutdownsDataRetries < RETRIES_MAX_COUNT) {
+    console.log("🌀 Try getting shutdowns data again...")
+    await new Promise((resolve) => setTimeout(resolve, RETRIES_TIMEOUT))
+    getShutdownsDataRetries++
+    return await getShutdownsData()
+  }
+
+  throw Error(
+    `❌ Getting shutdowns data failed after ${RETRIES_MAX_COUNT} retries.`
+  )
 }
 
 function generateSchedule({ data, today }) {
