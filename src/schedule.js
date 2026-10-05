@@ -115,14 +115,14 @@ function generateMessage(schedule = [], update) {
     ...(isShutdownsExists
       ? schedule
           .filter(({ power }) => !power)
-          .map(({ begin, end }) => `🪫 <code>${begin} — ${end}\</code>`)
-      : schedule.map(({ begin, end }) => `🔋 <code>${begin} — ${end}\</code>`)),
+          .map(({ begin, end }) => `🪫 <code>${begin} — ${end}</code>`)
+      : schedule.map(({ begin, end }) => `🔋 <code>${begin} — ${end}</code>`)),
   ].join("\n")
 
   return [
     `⚡️ <b>Графік відключень на сьогодні:</b>`,
     info,
-    "\n",
+    "",
     `📢 <i>${update}</i>`,
     `🤖 <i>${getCurrentTime()}</i>`,
   ].join("\n")
