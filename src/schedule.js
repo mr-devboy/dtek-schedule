@@ -123,8 +123,8 @@ function generateMessage(schedule = [], update) {
     `⚡️ <b>Графік відключень на сьогодні:</b>`,
     info,
     "\n",
-    `🔄 <i>${update}</i>`,
-    `💬 <i>${getCurrentTime()}</i>`,
+    `📢 <i>${update}</i>`,
+    `🤖 <i>${getCurrentTime()}</i>`,
   ].join("\n")
 }
 
