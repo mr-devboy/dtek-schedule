@@ -62,7 +62,8 @@ function generateSchedule({ data, today }) {
   console.log("🌀 Generating schedule...")
 
   try {
-    const hoursStates = data?.[today]?.[GROUP]
+    const hoursStates = data[today][GROUP]
+    if (!hoursStates) throw Error(`group ${GROUP} not found`)
     const [schedule, setSchedule] = useSchedule([])
 
     hours.forEach((hour) => {
