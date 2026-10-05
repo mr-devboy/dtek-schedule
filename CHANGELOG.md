@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/mr-devboy/dtek-schedule/compare/v2.0.0...v2.1.0) (2026-10-05)
+
+
+### Features
+
+* extend silent night mode to 22:00-08:00 ([0cb1214](https://github.com/mr-devboy/dtek-schedule/commit/0cb1214098a553d61740d05af3c6e3769c1c81b2))
+
 ## [2.0.0](https://github.com/mr-devboy/dtek-schedule/compare/v1.1.1...v2.0.0) (2026-10-05)
 
 
