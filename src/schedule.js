@@ -92,7 +92,7 @@ function generateSchedule({ data, today }) {
     console.log("✅ Generating schedule finished.")
 
     return schedule
-  } catch {
+  } catch (error) {
     throw Error(`❌ Generating schedule failed: ${error.message}.`)
   }
 }
