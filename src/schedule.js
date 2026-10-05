@@ -155,20 +155,25 @@ async function sendNotification(message) {
     )
 
     const data = await response.json()
+    if (!data.ok) throw Error(data.description)
+
     saveLastMessage(data.result)
 
     console.log("🟢 Notification sent.")
   } catch (error) {
-    console.log("🔴 Notification not sent.", error.message)
+    console.error(`❌ Sending notification failed: ${error.message}.`)
     deleteLastMessage()
 
     if (sendNotificationRetries < RETRIES_MAX_COUNT) {
       console.log("🌀 Try sending notification again...")
-      setTimeout(() => {
-        sendNotificationRetries++
-        sendNotification(info)
-      }, RETRIES_TIMEOUT)
+      await new Promise((resolve) => setTimeout(resolve, RETRIES_TIMEOUT))
+      sendNotificationRetries++
+      return await sendNotification(message)
     }
+
+    throw Error(
+      `❌ Sending notification failed after ${RETRIES_MAX_COUNT} retries.`
+    )
   }
 }
 
