@@ -56,18 +56,6 @@
 | `TELEGRAM_CHAT_ID`   | ID чату в Telegram                      | `123456789` або `-123456789` (для каналу)                                                        |
 | `REGION`             | Регіон ДТЕК                             | `k` — Київ, `kr` — Київська обл., `dn` — Дніпровська обл.,`o` — Одеська обл.,`d` — Донецька обл. |
 | `GROUP`              | Номер групи відключень без префіксу GPV | `1.2`                                                                                            |
-| `PAT`                | Personal Access Token для GitHub        | [Інструкція](#створення-pat)                                                                     |
-
-#### Створення PAT
-
-1. Перейдіть в **Settings** → **Developer settings** → **Personal access tokens** → **Fine-grained tokens**.
-2. Натисніть **Generate new token**.
-3. Підтвердіть доступ одним із запропонованих методів, наприклад `Use GitHub Mobile`.
-4. Вкажіть назву токена, наприклад `dtek-schedule`.
-5. Встановіть термін дії (або `No expiration` на свій розсуд).
-6. Оберіть **Repository access** → `Only select repositories` та оберіть клонований репозиторій.
-7. Натисніть **+ Add permissions** → відмітьте `Read access to metadata` та `Read and Write access to code`.
-8. Натисніть **Generate token** та скопіюйте токен.
 
 ### 6. Запуск Actions
 
