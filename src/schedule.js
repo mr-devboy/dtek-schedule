@@ -111,7 +111,7 @@ function generateMessage(schedule = [], update) {
     ? console.log("🪫 Power shutdowns detected!")
     : console.log("🔋 No power shutdowns!")
 
-  const info = [
+  const scheduleText = [
     ...(isShutdownsExists
       ? schedule
           .filter(({ power }) => !power)
@@ -119,37 +119,48 @@ function generateMessage(schedule = [], update) {
       : schedule.map(({ begin, end }) => `🔋 <code>${begin} — ${end}</code>`)),
   ].join("\n")
 
-  return [
+  const text = [
     `⚡️ <b>Графік відключень на сьогодні:</b>`,
-    info,
+    scheduleText,
     "",
     `📢 <i>${update}</i>`,
     `🤖 <i>${getCurrentTime()}</i>`,
   ].join("\n")
+
+  return { text, scheduleText }
 }
 
-async function sendNotification(message) {
+async function sendNotification({ text, scheduleText }) {
   if (!TELEGRAM_BOT_TOKEN) throw Error("❌ Missing telegram bot token.")
   if (!TELEGRAM_CHAT_ID) throw Error("❌ Missing telegram chat id.")
 
   console.log("🌀 Sending notification...")
 
   const lastMessage = loadLastMessage() || {}
+  const isScheduleChanged = lastMessage.scheduleText !== scheduleText
+  const isEdit = Boolean(lastMessage.message_id) && !isScheduleChanged
+  const isReply = Boolean(lastMessage.message_id) && isScheduleChanged
 
   try {
     const response = await fetch(
       `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/${
-        lastMessage.message_id ? "editMessageText" : "sendMessage"
+        isEdit ? "editMessageText" : "sendMessage"
       }`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           chat_id: TELEGRAM_CHAT_ID,
-          text: message,
+          text,
           parse_mode: "HTML",
           disable_notification: checkIsNight(),
-          message_id: lastMessage.message_id ?? undefined,
+          message_id: isEdit ? lastMessage.message_id : undefined,
+          reply_parameters: isReply
+            ? {
+                message_id: lastMessage.message_id,
+                allow_sending_without_reply: true,
+              }
+            : undefined,
         }),
       }
     )
@@ -162,7 +173,7 @@ async function sendNotification(message) {
     }
     if (!data.ok) throw Error(data.description)
 
-    saveLastMessage(data.result)
+    saveLastMessage({ ...data.result, scheduleText })
 
     console.log("🟢 Notification sent.")
   } catch (error) {
@@ -173,7 +184,7 @@ async function sendNotification(message) {
       console.log("🌀 Try sending notification again...")
       await new Promise((resolve) => setTimeout(resolve, RETRIES_TIMEOUT))
       sendNotificationRetries++
-      return await sendNotification(message)
+      return await sendNotification({ text, scheduleText })
     }
 
     throw Error(
