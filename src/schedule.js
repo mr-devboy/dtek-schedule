@@ -187,9 +187,12 @@ async function run() {
   }
 
   const schedule = generateSchedule(data)
-  const scheduleMessage = generateMessage(schedule, data.update)
+  const message = generateMessage(schedule, data.update)
 
-  sendNotification(scheduleMessage)
+  await sendNotification(message)
 }
 
-run().catch((error) => console.error(error.message))
+run().catch((error) => {
+  console.error(error.message)
+  process.exitCode = 1
+})
