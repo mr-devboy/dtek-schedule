@@ -51,8 +51,13 @@ const getShutdownsData = async () => {
     if (getShutdownsDataRetries < RETRIES_MAX_COUNT) {
       console.log("🌀 Try getting shutdowns data again...")
       await new Promise((resolve) => setTimeout(resolve, RETRIES_TIMEOUT))
+      getShutdownsDataRetries++
       return await getShutdownsData()
     }
+
+    throw Error(
+      `❌ Getting shutdowns data failed after ${RETRIES_MAX_COUNT} retries.`
+    )
   } finally {
     await browser.close()
   }
