@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/mr-devboy/dtek-schedule/compare/v2.1.0...v2.2.0) (2026-10-06)
+
+
+### Features
+
+* allow triggering the workflow from an external cron ([e21246a](https://github.com/mr-devboy/dtek-schedule/commit/e21246ac6d7723395bae468d691178c6822d9a20))
+
 ## [2.1.0](https://github.com/mr-devboy/dtek-schedule/compare/v2.0.0...v2.1.0) (2026-10-05)
 
 
