@@ -1,4 +1,4 @@
-name: Run power outages schedule generator
+name: Run power outages schedule generator 
 
 on:
   schedule:
