@@ -171,14 +171,16 @@ async function sendNotification({ text, scheduleText }) {
       console.log("🟡 Notification not changed.")
       return
     }
-    if (!data.ok) throw Error(data.description)
+    if (!data.ok) {
+      deleteLastMessage()
+      throw Error(data.description)
+    }
 
     saveLastMessage({ ...data.result, scheduleText })
 
     console.log("🟢 Notification sent.")
   } catch (error) {
     console.error(`❌ Sending notification failed: ${error.message}.`)
-    deleteLastMessage()
 
     if (sendNotificationRetries < RETRIES_MAX_COUNT) {
       console.log("🌀 Try sending notification again...")
