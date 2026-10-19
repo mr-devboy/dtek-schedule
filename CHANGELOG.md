@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.1](https://github.com/mr-devboy/dtek-schedule/compare/v2.2.0...v2.2.1) (2026-10-19)
+
+
+### Bug Fixes
+
+* keep last message on transient send errors ([92efeab](https://github.com/mr-devboy/dtek-schedule/commit/92efeab30b2713607ab89acf2ec84c5bb210d8e9))
+
 ## [2.2.0](https://github.com/mr-devboy/dtek-schedule/compare/v2.1.0...v2.2.0) (2026-10-06)
 
 
