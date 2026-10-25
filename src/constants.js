@@ -27,7 +27,11 @@ export const hours = Array.from({ length: 24 }).map((_, i) => i)
 export const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
 export const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID
 
-export const LAST_MESSAGE_FILE = path.resolve("artifacts", `last-message.json`)
+export const LAST_MESSAGE_FILE = path.resolve(
+  "artifacts",
+  process.env.TARGET ?? "",
+  "last-message.json",
+)
 
 export const RETRIES_MAX_COUNT = 5
 export const RETRIES_TIMEOUT = 5000
