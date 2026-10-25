@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.3.0](https://github.com/mr-devboy/dtek-schedule/compare/v2.2.1...v2.3.0) (2026-10-25)
+
+
+### Features
+
+* support multiple addresses via TARGETS variable ([d130089](https://github.com/mr-devboy/dtek-schedule/commit/d130089f19856fae6f6b0a66606d17cd92e5d288))
+
+
+### Documentation
+
+* describe multiple addresses setup ([1e3f7aa](https://github.com/mr-devboy/dtek-schedule/commit/1e3f7aa5f111e71eff47366d638d0a4a394a51c7))
+
+
+### Continuous Integration
+
+* cache npm and Playwright browsers ([5907f9f](https://github.com/mr-devboy/dtek-schedule/commit/5907f9febd57aa76f4a25bdacbc2886c48f00ae9))
+
 ## [2.2.1](https://github.com/mr-devboy/dtek-schedule/compare/v2.2.0...v2.2.1) (2026-10-19)
 
 
