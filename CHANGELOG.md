@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/mr-devboy/dtek-schedule/compare/v2.3.0...v3.0.0) (2026-11-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* the notification now contains today's and tomorrow's schedules with new section titles. The state file stores the schedule under `body` instead of `scheduleText`, so the first run after the update replies with a new message. Node.js 24 is required.
+
+### Features
+
+* add tomorrow's schedule to notification ([9e2bf71](https://github.com/mr-devboy/dtek-schedule/commit/9e2bf715de44043acff126ed997fa418be2b6a59))
+
 ## [2.3.0](https://github.com/mr-devboy/dtek-schedule/compare/v2.2.1...v2.3.0) (2026-10-25)
 
 
