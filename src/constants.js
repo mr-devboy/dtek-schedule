@@ -22,6 +22,11 @@ export const PowerState = Object.freeze({
   HALF_OFF: "first",
 })
 
+export const DayTitle = Object.freeze({
+  TODAY: "⚡️ Графік відключень на сьогодні",
+  TOMORROW: "🔮 Графік відключень на завтра",
+})
+
 export const hours = Array.from({ length: 24 }).map((_, i) => i)
 
 export const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN

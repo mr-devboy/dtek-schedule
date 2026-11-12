@@ -50,6 +50,10 @@ export function getCurrentTime() {
   return `${date} ${time}`
 }
 
+export function getNextDay({ data, day }) {
+  return Object.keys(data.data ?? {}).find((key) => Number(key) > day)
+}
+
 export function checkIsNight() {
   const hours = new Date().toLocaleString("en-US", {
     timeZone: "Europe/Kyiv",
@@ -84,14 +88,14 @@ export function loadLastMessage() {
   return lastMessage
 }
 
-export function saveLastMessage({ date, message_id, scheduleText } = {}) {
+export function saveLastMessage({ date, message_id, body } = {}) {
   fs.mkdirSync(path.dirname(LAST_MESSAGE_FILE), { recursive: true })
   fs.writeFileSync(
     LAST_MESSAGE_FILE,
     JSON.stringify({
       message_id,
       date,
-      scheduleText,
+      body,
     })
   )
 }

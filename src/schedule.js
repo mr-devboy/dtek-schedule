@@ -4,12 +4,14 @@ import {
   checkIsNight,
   createPeriod,
   getCurrentTime,
+  getNextDay,
   loadLastMessage,
   saveLastMessage,
   deleteLastMessage,
   useSchedule,
 } from "./helpers.js"
 import {
+  DayTitle,
   GROUP,
   hours,
   PowerState,
@@ -21,10 +23,7 @@ import {
   RETRIES_MAX_COUNT,
 } from "./constants.js"
 
-let sendNotificationRetries = 0
-let getShutdownsDataRetries = 0
-
-const getShutdownsData = async () => {
+const getShutdownsData = async ({ attempt = 0 } = {}) => {
   console.log("🌀 Getting shutdowns data...")
 
   const browser = await chromium.launch({ headless: true })
@@ -51,11 +50,10 @@ const getShutdownsData = async () => {
     await browser.close()
   }
 
-  if (getShutdownsDataRetries < RETRIES_MAX_COUNT) {
+  if (attempt < RETRIES_MAX_COUNT) {
     console.log("🌀 Try getting shutdowns data again...")
     await new Promise((resolve) => setTimeout(resolve, RETRIES_TIMEOUT))
-    getShutdownsDataRetries++
-    return await getShutdownsData()
+    return await getShutdownsData({ attempt: attempt + 1 })
   }
 
   throw Error(
@@ -63,16 +61,16 @@ const getShutdownsData = async () => {
   )
 }
 
-function generateSchedule({ data, today }) {
+function generateSchedule({ data }) {
+  if (!data) return null
+
   console.log("🌀 Generating schedule...")
 
   try {
-    const hoursStates = data[today][GROUP]
-    if (!hoursStates) throw Error(`group ${GROUP} not found`)
     const [schedule, setSchedule] = useSchedule([])
 
     hours.forEach((hour) => {
-      const state = hoursStates[hour + 1]
+      const state = data[hour + 1]
 
       switch (state) {
         case PowerState.ON:
@@ -103,43 +101,48 @@ function generateSchedule({ data, today }) {
   }
 }
 
-function generateMessage(schedule = [], update) {
-  console.log("🌀 Generating message...")
+function generateScheduleText({ title, schedule }) {
+  if (!schedule) return null
 
   const isShutdownsExists = schedule.some(({ power }) => !power)
   isShutdownsExists
-    ? console.log("🪫 Power shutdowns detected!")
-    : console.log("🔋 No power shutdowns!")
+    ? console.log(`🪫 Power shutdowns detected: ${title}.`)
+    : console.log(`🔋 No power shutdowns: ${title}.`)
 
-  const scheduleText = [
-    ...(isShutdownsExists
-      ? schedule
-          .filter(({ power }) => !power)
-          .map(({ begin, end }) => `🪫 <code>${begin} — ${end}</code>`)
-      : schedule.map(({ begin, end }) => `🔋 <code>${begin} — ${end}</code>`)),
-  ].join("\n")
+  const periods = isShutdownsExists
+    ? schedule
+        .filter(({ power }) => !power)
+        .map(({ begin, end }) => `🪫 <code>${begin} — ${end}</code>`)
+    : schedule.map(({ begin, end }) => `🔋 <code>${begin} — ${end}</code>`)
 
-  const text = [
-    `⚡️ <b>Графік відключень на сьогодні:</b>`,
-    scheduleText,
-    "",
-    `📢 <i>${update}</i>`,
+  return [`<b>${title}:</b>`, ...periods].join("\n")
+}
+
+function generateMessage({ sections, updatedAt }) {
+  console.log("🌀 Generating message...")
+
+  const body = sections.filter(Boolean).join("\n\n")
+
+  const footer = [
+    `📢 <i>${updatedAt}</i>`,
     `🤖 <i>${getCurrentTime()}</i>`,
   ].join("\n")
 
-  return { text, scheduleText }
+  return { body, footer }
 }
 
-async function sendNotification({ text, scheduleText }) {
+async function sendNotification({ body, footer, attempt = 0 }) {
   if (!TELEGRAM_BOT_TOKEN) throw Error("❌ Missing telegram bot token.")
   if (!TELEGRAM_CHAT_ID) throw Error("❌ Missing telegram chat id.")
 
   console.log("🌀 Sending notification...")
 
+  const text = [body, footer].join("\n\n")
+
   const lastMessage = loadLastMessage() || {}
-  const isScheduleChanged = lastMessage.scheduleText !== scheduleText
-  const isEdit = Boolean(lastMessage.message_id) && !isScheduleChanged
-  const isReply = Boolean(lastMessage.message_id) && isScheduleChanged
+  const isBodyChanged = lastMessage.body !== body
+  const isEdit = Boolean(lastMessage.message_id) && !isBodyChanged
+  const isReply = Boolean(lastMessage.message_id) && isBodyChanged
 
   try {
     const response = await fetch(
@@ -176,17 +179,20 @@ async function sendNotification({ text, scheduleText }) {
       throw Error(data.description)
     }
 
-    saveLastMessage({ ...data.result, scheduleText })
+    saveLastMessage({ ...data.result, body })
 
     console.log("🟢 Notification sent.")
   } catch (error) {
     console.error(`❌ Sending notification failed: ${error.message}.`)
 
-    if (sendNotificationRetries < RETRIES_MAX_COUNT) {
+    if (attempt < RETRIES_MAX_COUNT) {
       console.log("🌀 Try sending notification again...")
       await new Promise((resolve) => setTimeout(resolve, RETRIES_TIMEOUT))
-      sendNotificationRetries++
-      return await sendNotification({ text, scheduleText })
+      return await sendNotification({
+        body,
+        footer,
+        attempt: attempt + 1,
+      })
     }
 
     throw Error(
@@ -198,14 +204,33 @@ async function sendNotification({ text, scheduleText }) {
 async function run() {
   const data = await getShutdownsData()
 
-  const groups = data.data?.[data.today] ?? {}
-  if (!Object.keys(groups).length) {
-    console.log("🔋 No schedule for today.")
+  const { today } = data
+  const tomorrow = getNextDay({ data, day: today })
+
+  const todayData = data.data?.[today]?.[GROUP]
+  const tomorrowData = data.data?.[tomorrow]?.[GROUP]
+
+  const todaySchedule = generateSchedule({ data: todayData })
+  const tomorrowSchedule = generateSchedule({ data: tomorrowData })
+
+  if (!todaySchedule && !tomorrowSchedule) {
+    console.log("🔋 No schedule.")
     return
   }
 
-  const schedule = generateSchedule(data)
-  const message = generateMessage(schedule, data.update)
+  const todayText = generateScheduleText({
+    title: DayTitle.TODAY,
+    schedule: todaySchedule,
+  })
+  const tomorrowText = generateScheduleText({
+    title: DayTitle.TOMORROW,
+    schedule: tomorrowSchedule,
+  })
+
+  const message = generateMessage({
+    sections: [todayText, tomorrowText],
+    updatedAt: data.update,
+  })
 
   await sendNotification(message)
 }
