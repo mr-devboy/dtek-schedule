@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1](https://github.com/mr-devboy/dtek-schedule/compare/v3.0.0...v3.0.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* bump playwright for ubuntu 26.04 runner support ([6b1f499](https://github.com/mr-devboy/dtek-schedule/commit/6b1f49916bd83ddce38ebf9879ef50e41626cbe4))
+
 ## [3.0.0](https://github.com/mr-devboy/dtek-schedule/compare/v2.3.0...v3.0.0) (2026-11-12)
 
 
