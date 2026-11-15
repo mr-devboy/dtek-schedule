@@ -9,7 +9,7 @@
     "watch": "node --env-file=.env --watch ./src/schedule.js"
   },
   "dependencies": {
-    "playwright": "^1.56.1"
+    "playwright": "^1.65.1"
   },
   "engines": {
     "node": ">=24.12.0"
