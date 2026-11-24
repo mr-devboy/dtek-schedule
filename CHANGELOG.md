@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.2](https://github.com/mr-devboy/dtek-schedule/compare/v3.0.1...v3.0.2) (2026-11-24)
+
+
+### Continuous Integration
+
+* stop creating deployments on schedule runs ([56b1cf4](https://github.com/mr-devboy/dtek-schedule/commit/56b1cf496b1a211607585bff94e916f1c782b3f9))
+
 ## [3.0.1](https://github.com/mr-devboy/dtek-schedule/compare/v3.0.0...v3.0.1) (2026-11-15)
 
 
